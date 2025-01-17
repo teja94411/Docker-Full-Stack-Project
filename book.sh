@@ -17,4 +17,6 @@ echo "running backend server"
 
 echo "running remote backend server"
 
+echo "I love India"
+
 echo "Jenkins job completed successfully!"
