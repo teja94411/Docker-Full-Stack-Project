@@ -13,4 +13,6 @@ ls -l
 echo "Running Maven build..."
 mvn clean install
 
+echo "running backend server"
+
 echo "Jenkins job completed successfully!"
