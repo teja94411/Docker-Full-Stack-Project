@@ -13,10 +13,13 @@ ls -l
 echo "Running Maven build..."
 mvn clean install
 
+<<<<<<< HEAD
 echo "running backend server"
 
 echo "running remote backend server"
 
 echo "I love India"
 
+=======
+>>>>>>> parent of 1b8c82e (Update book.sh)
 echo "Jenkins job completed successfully!"
