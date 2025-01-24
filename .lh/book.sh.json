@@ -3,11 +3,15 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 1,
             "patches": [
                 {
                     "date": 1737131028338,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1737715311922,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,16 +1,22 @@\n-#!/bin/bash\n-\n-echo \"Starting the Jenkins job...\"\n-\n-# Example task 1: Print the current date and time\n-echo \"Current date and time: $(date)\"\n-\n-# Example task 2: List files in the current directory\n-echo \"Listing files in the current directory:\"\n-ls -l\n-\n-# Example task 3: Running a simple command, like a simple build (e.g., Maven)\n-echo \"Running Maven build...\"\n-mvn clean install\n-\n-echo \"Jenkins job completed successfully!\"\n+#!/bin/bash\r\n+\r\n+echo \"Starting the Jenkins job...\"\r\n+\r\n+# Example task 1: Print the current date and time\r\n+echo \"Current date and time: $(date)\"\r\n+\r\n+# Example task 2: List files in the current directory\r\n+echo \"Listing files in the current directory:\"\r\n+ls -l\r\n+\r\n+# Example task 3: Running a simple command, like a simple build (e.g., Maven)\r\n+echo \"Running Maven build...\"\r\n+mvn clean install\r\n+\r\n+echo \"running backend server\"\r\n+\r\n+echo \"running remote backend server\"\r\n+\r\n+echo \"I love India\"\r\n+\r\n+echo \"Jenkins job completed successfully!\"\r\n"
                 }
             ],
             "date": 1737131028338,
