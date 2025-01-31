@@ -7,4 +7,3 @@ df -h | awk -v thresh=$threshold '$5+0 >= thresh {
     system("echo Warning: " $1 " is " $5 " full!")
     echo "task completed successfully"
 }'
-echo "Iam a devops engineer"
