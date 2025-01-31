@@ -8,3 +8,4 @@ df -h | awk -v thresh=$threshold '$5+0 >= thresh {
     
 }'
 echo "completed successfully.."
+echo "completed successfully.."
