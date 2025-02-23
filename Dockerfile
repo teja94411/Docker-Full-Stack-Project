@@ -1,5 +1,5 @@
 #Step1:- Set up frontend dockerfile
-FROM nginx 
+FROM nginx:alpine 
 WORKDIR /frontend 
 COPY frontend/ /usr/share/nginx/html
 
