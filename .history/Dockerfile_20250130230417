@@ -1,5 +1,5 @@
 #Step1:- Set up frontend dockerfile
-FROM nginx:latest
+FROM nginx 
 WORKDIR /frontend 
 COPY frontend/ /usr/share/nginx/html
 
