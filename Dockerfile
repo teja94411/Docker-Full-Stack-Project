@@ -1,17 +1,17 @@
 # Step 1: Set up frontend Dockerfile
 FROM nginx:latest as frontend-build
-WORKDIR /frontend 
+WORKDIR /frontend
 COPY frontend/ /usr/share/nginx/html
 
 # Step 2: Set up backend Dockerfile
 FROM python:3.9-slim as backend
 WORKDIR /backend
-COPY backend / /backend/
-RUN pip install --no-cache-dir -r requirements.txt
+COPY backend/ /backend/
+RUN pip install --no-cache-dir -r /backend/requirements.txt
 
 # Step 3: Combining backend and frontend
 FROM nginx:latest
-COPY --from=frontend-build /usr/share/nginx/html /usr/share/nginx/html 
+COPY --from=frontend-build /usr/share/nginx/html /usr/share/nginx/html
 COPY --from=backend /backend /backend
 EXPOSE 80 5000
-CMD ["bat", "-c", "python /backend/app.py &nginx -g 'daemon off;'"]
+CMD ["bash", "-c", "python /backend/app.py & nginx -g 'daemon off;'"]
