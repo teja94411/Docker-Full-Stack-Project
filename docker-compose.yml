@@ -1,10 +1,20 @@
 version: '3.8'
 
 services:
-  app:
-    image: tejaroyal/backend-app  # Ensure it matches pipeline
+  frontend:
+    image: tejaroyal/frontend-app
     ports:
       - "80:80"
+    networks:
+      - mynetwork
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+
+  backend:
+    image: tejaroyal/backend-app
+    ports:
       - "5000:5000"
     environment:
       - DATABASE_URL=postgres://postgres:password@db:5432/mydatabase
@@ -15,8 +25,7 @@ services:
       restart_policy:
         condition: on-failure
     depends_on:
-      db:
-        condition: service_healthy  # Ensures DB is ready before starting app
+      - db
 
   db:
     image: postgres:latest
@@ -32,11 +41,6 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "postgres"]
-      interval: 10s
-      retries: 5
-      start_period: 30s
 
 networks:
   mynetwork:
