@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   app:
-    build: .
+    image: tejaroyal/backend-app  # Ensure it matches pipeline
     ports:
       - "80:80"
       - "5000:5000"
@@ -15,7 +15,8 @@ services:
       restart_policy:
         condition: on-failure
     depends_on:
-      - db
+      db:
+        condition: service_healthy  # Ensures DB is ready before starting app
 
   db:
     image: postgres:latest
@@ -31,6 +32,11 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
 
 networks:
   mynetwork:
