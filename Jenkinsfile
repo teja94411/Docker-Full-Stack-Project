@@ -156,8 +156,7 @@ pipeline {
             }
         }
     }       
- }
- post {
+    post {
         success {
             slackSend(channel: '#jenkins-integration', color: 'good', message: 'Build succeeded! :tada: All tests passed and everything is good to go! 🎉')
         }
