@@ -6,6 +6,11 @@ pipeline {
         BACKEND_IMAGE = 'tejaroyal/backend-app'
     }
     stages {
+        stage('Initial Slack Test') {
+            steps {
+                slackSend(channel: '#jenkins-integration', color: 'good', message: 'Pipeline started! :rocket:')
+            }
+        }
         stage('Checkout Code') {
             steps {
                 checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: '3f601ce9-7463-4bde-bf20-ca21df940366', url: 'https://github.com/teja94411/Docker-Full-Stack-Project.git']])
@@ -150,14 +155,17 @@ pipeline {
                 }
             }
         }
-    }
-
-    post {
+    }       
+ }
+ post {
         success {
-            echo 'Pipeline executed successfully! Deployment is stable.'
+            slackSend(channel: '#jenkins-integration', color: 'good', message: 'Build succeeded! :tada: All tests passed and everything is good to go! 🎉')
         }
         failure {
-            echo 'Pipeline failed. Check logs for details.'
+            slackSend(channel: '#jenkins-integration', color: 'danger', message: 'Build failed! :x: Something went wrong. Please check the logs for more details. 🔧')
+        }
+        unstable {
+            slackSend(channel: '#jenkins-integration', color: 'warning', message: 'Build is unstable! :warning: Some tests did not pass. Please review and address the issues. ⚠️')
         }
     }
 }
