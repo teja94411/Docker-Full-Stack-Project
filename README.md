@@ -1,3 +1,16 @@
+## Request to Fork or Use Code
+
+**Name**: [Your Project Name]
+
+This project is publicly available for viewing, but **forking or copying the code without explicit permission is prohibited**. If you would like to use or fork this code, **please contact me first**.
+
+### Request Process
+To request permission to use or fork this code:
+1. **Submit a request**: Reach out to me via [your contact method].
+2. **Approval**: I will review your request and grant permission if necessary.
+
+Please note that all rights are reserved, and usage without consent may result in legal action.
+
 # About
 
  Dockerized full project utilizes containerization to package an application with all dependencies, ensuring consistency across environments. It employs a multi-stage build 
