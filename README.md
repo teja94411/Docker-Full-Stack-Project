@@ -18,3 +18,7 @@ Please note that all rights are reserved, and usage without consent may result i
  databases, caching, and application layers. Networking concepts ensure secure communication between containers, while volumes and persistent storage handle data retention 
  efficiently. To enhance scalability and fault tolerance, the project is orchestrated using Docker Swarm. This setup ensures a streamlined CI/CD pipeline, 
  efficient resource utilization, and a highly portable application deployment. 🚀
+
+ ![WhatsApp Image 2025-03-24 at 19 56 04](https://github.com/user-attachments/assets/51626d77-b59d-4ca5-8b99-28d95337dcac)
+ 
+
