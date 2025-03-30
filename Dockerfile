@@ -1,47 +1,43 @@
-# --- Backend Stage: Build Dependencies Securely ---
-FROM python:3.9-slim AS backend-build
+# --- Backend Stage: Prepare Python Application ---
+FROM python:3.9-slim AS backend
 
-# Set a non-root user early
+# Create a non-root user
 RUN addgroup --system appgroup && adduser --system --group appuser
 
 WORKDIR /backend
 
-# Install dependencies securely
+# Install required dependencies
 COPY backend/ .
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/* \
     && pip install --no-cache-dir -r requirements.txt
 
-# --- Frontend Stage: Build Frontend ---
-FROM node:18-alpine AS frontend-build
+# Change ownership for security
+RUN chown -R appuser:appgroup /backend
 
-WORKDIR /frontend
-COPY frontend/ .
-RUN npm ci && npm run build
+# --- Final Stage: Serve Frontend with Nginx ---
+FROM nginx:alpine
 
-# --- Final Stage: Production ---
-FROM nginx:1.25-alpine
-
-# Set secure user
+# Create a non-root user for security
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 WORKDIR /app
 
-# Copy backend from build stage
-COPY --from=backend-build /backend /app/backend
+# Copy backend from previous stage
+COPY --from=backend /backend /app/backend
 
-# Copy frontend from build stage
-COPY --from=frontend-build /frontend/build /usr/share/nginx/html
+# Copy frontend static files to Nginx web root
+COPY frontend/ /usr/share/nginx/html
 
-# Change ownership for security
+# Ensure correct ownership
 RUN chown -R appuser:appgroup /app /usr/share/nginx/html
 
 # Switch to non-root user
 USER appuser
 
-# Expose necessary ports
+# Expose required ports
 EXPOSE 80 5000
 
-# Start backend & Nginx securely
+# Start backend and Nginx
 CMD ["sh", "-c", "python /app/backend/app.py & exec nginx -g 'daemon off;'"]
