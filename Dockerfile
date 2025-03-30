@@ -1,43 +1,47 @@
-# Step 1: Build the frontend using a secure Nginx base image
-FROM nginx:1.25.3-alpine AS frontend-build
-WORKDIR /usr/share/nginx/html
-COPY frontend/ . 
+# --- Backend Stage: Build Dependencies Securely ---
+FROM python:3.9-slim AS backend-build
 
-# Step 2: Set up the backend using a minimal Python image
-FROM python:3.9-slim AS backend
+# Set a non-root user early
+RUN addgroup --system appgroup && adduser --system --group appuser
+
 WORKDIR /backend
 
-# Create a non-root user for security
-RUN useradd -m appuser
-USER appuser
-
-# Copy backend files
-COPY backend/ . 
-
 # Install dependencies securely
-RUN pip install --no-cache-dir -r requirements.txt
+COPY backend/ .
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/* \
+    && pip install --no-cache-dir -r requirements.txt
 
-# Step 3: Final production container with frontend + backend
-FROM nginx:1.25.3-alpine
+# --- Frontend Stage: Build Frontend ---
+FROM node:18-alpine AS frontend-build
+
+WORKDIR /frontend
+COPY frontend/ .
+RUN npm ci && npm run build
+
+# --- Final Stage: Production ---
+FROM nginx:1.25-alpine
+
+# Set secure user
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 WORKDIR /app
 
-# Copy frontend files to Nginx's web root
-COPY --from=frontend-build /usr/share/nginx/html /usr/share/nginx/html
+# Copy backend from build stage
+COPY --from=backend-build /backend /app/backend
 
-# Copy backend files
-COPY --from=backend /backend /backend
+# Copy frontend from build stage
+COPY --from=frontend-build /frontend/build /usr/share/nginx/html
+
+# Change ownership for security
+RUN chown -R appuser:appgroup /app /usr/share/nginx/html
+
+# Switch to non-root user
+USER appuser
 
 # Expose necessary ports
 EXPOSE 80 5000
 
-# Copy entrypoint script and set execute permissions
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-
-# Use non-root user for security
-RUN adduser -D appuser
-USER appuser
-
-# Run entrypoint script
-CMD ["/entrypoint.sh"]
+# Start backend & Nginx securely
+CMD ["sh", "-c", "python /app/backend/app.py & exec nginx -g 'daemon off;'"]
