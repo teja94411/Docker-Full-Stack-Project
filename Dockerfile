@@ -32,7 +32,7 @@ COPY --from=backend /backend /backend
 EXPOSE 80 5000
 
 # Copy entrypoint script and set execute permissions
-COPY docker/entrypoint.sh /entrypoint.sh
+COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 # Use non-root user for security
