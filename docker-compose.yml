@@ -25,9 +25,8 @@ services:
       restart_policy:
         condition: on-failure
     depends_on:
-      db:
-        condition: service_healthy
-    command: ["/bin/sh", "-c", "sleep 10 && python app.py"]
+      - db
+    command: ["/bin/sh", "-c", "until pg_isready -h db -p 5432; do sleep 2; done && python app.py"]
 
   db:
     image: postgres:latest
@@ -51,7 +50,6 @@ services:
 
 networks:
   mynetwork:
-    name: mynetwork
     driver: overlay
 
 volumes:
