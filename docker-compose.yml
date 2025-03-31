@@ -26,7 +26,6 @@ services:
         condition: on-failure
     depends_on:
       - db
-    command: ["/bin/sh", "-c", "until pg_isready -h db -p 5432; do sleep 2; done && python app.py"]
 
   db:
     image: postgres:latest
@@ -42,11 +41,6 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
 networks:
   mynetwork:
