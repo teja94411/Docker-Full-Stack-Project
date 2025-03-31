@@ -1,43 +1,33 @@
-# --- Backend Stage: Prepare Python Application ---
-FROM python:3.9-slim AS backend
+# Step 1: Build the frontend using Nginx
+FROM nginx:latest as frontend-build
+WORKDIR /usr/share/nginx/html
+COPY frontend/ . 
 
-# Create a non-root user
-RUN addgroup --system appgroup && adduser --system --group appuser
-
+# Step 2: Set up the backend using Python
+FROM python:3.9-slim as backend
 WORKDIR /backend
+COPY backend/ . 
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Install required dependencies
-COPY backend/ .
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    libpq-dev \
-    && rm -rf /var/lib/apt/lists/* \
-    && pip install --no-cache-dir -r requirements.txt
-
-# Change ownership for security
-RUN chown -R appuser:appgroup /backend
-
-# --- Final Stage: Serve Frontend with Nginx ---
-FROM nginx:alpine
-
-# Create a non-root user for security
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+# Step 3: Final container combining frontend and backend
+FROM nginx:latest
 
 WORKDIR /app
 
-# Copy backend from previous stage
-COPY --from=backend /backend /app/backend
-
-# Copy frontend static files to Nginx web root
-COPY frontend/ /usr/share/nginx/html
-
-# Ensure correct ownership
-RUN chown -R appuser:appgroup /app /usr/share/nginx/html
+# Create a non-root user
+RUN useradd -m appuser && chown -R appuser /app
 
 # Switch to non-root user
 USER appuser
 
-# Expose required ports
+# Copy frontend files to Nginx's web root
+COPY --from=frontend-build /usr/share/nginx/html /usr/share/nginx/html
+
+# Copy backend files
+COPY --from=backend /backend /backend
+
+# Expose necessary ports
 EXPOSE 80 5000
 
 # Start backend and Nginx
-CMD ["sh", "-c", "python /app/backend/app.py & exec nginx -g 'daemon off;'"]
+CMD ["bash", "-c", "python /backend/app.py & nginx -g 'daemon off;'"]
