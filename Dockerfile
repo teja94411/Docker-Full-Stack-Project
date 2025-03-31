@@ -14,10 +14,6 @@ FROM nginx:latest
 
 WORKDIR /app
 
-# Create and switch to a non-root user
-RUN useradd -m appuser && chown -R appuser /app /usr/share/nginx/html /backend
-USER appuser
-
 # Copy frontend files to Nginx's web root
 COPY --from=frontend-build /usr/share/nginx/html /usr/share/nginx/html
 
